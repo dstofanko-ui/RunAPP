@@ -1,0 +1,3010 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Bežecký Denník Pro</title>
+  <style>
+    :root {
+      --bg: #f4f6f9;
+      --surface: #ffffff;
+      --surface-alt: #f0f3f7;
+      --text: #111827;
+      --text-muted: #6b7280;
+      --border: #e5e7eb;
+      --primary: #2563eb;
+      --primary-fg: #ffffff;
+      --primary-soft: rgba(37, 99, 235, 0.12);
+      --danger: #ef4444;
+      --danger-soft: rgba(239, 68, 68, 0.12);
+      --success: #10b981;
+      --warning: #f59e0b;
+      --shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+      --radius: 16px;
+      --nav-h: 64px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b0f19;
+        --surface: #131a29;
+        --surface-alt: #1c2538;
+        --text: #f3f4f6;
+        --text-muted: #9ca3af;
+        --border: #263147;
+        --primary: #3b82f6;
+        --primary-fg: #ffffff;
+        --primary-soft: rgba(59, 130, 246, 0.18);
+        --danger: #f87171;
+        --danger-soft: rgba(248, 113, 113, 0.16);
+        --success: #34d399;
+        --warning: #fbbf24;
+        --shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+      }
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.45;
+      padding-bottom: calc(var(--nav-h) + 24px);
+      min-height: 100vh;
+    }
+
+    /* Layout */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .app-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-hm {
+      font-size: 0.7rem;
+      font-weight: 700;
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .view {
+      display: none;
+    }
+    .view.active {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Buttons & Inputs */
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn:active {
+      transform: scale(0.98);
+    }
+    .btn-primary {
+      background: var(--primary);
+      color: var(--primary-fg);
+    }
+    .btn-secondary {
+      background: var(--surface-alt);
+      border-color: var(--border);
+      color: var(--text);
+    }
+    .btn-danger {
+      background: var(--danger-soft);
+      color: var(--danger);
+    }
+    .btn-sm {
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      border-radius: 9px;
+    }
+    .btn-icon {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      border-radius: 10px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    @media (min-width: 600px) {
+      .form-grid-2 {
+        grid-template-columns: 1fr 1fr;
+      }
+      .form-grid-3 {
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .field label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .input {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 11px;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      outline: none;
+    }
+    .input:focus {
+      border-color: var(--primary);
+      background: var(--surface);
+    }
+
+    /* Segmented control */
+    .segmented {
+      display: flex;
+      background: var(--surface-alt);
+      padding: 3px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .segmented button {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 7px 10px;
+      border-radius: 9px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .segmented button.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+
+    /* Period switcher */
+    .period-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      background: var(--surface-alt);
+      padding: 6px 10px;
+      border-radius: 12px;
+    }
+    .period-label {
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    /* Hero Stats */
+    .hero-km {
+      font-size: 2.35rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      margin: 6px 0 12px;
+    }
+    .hero-km span {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+    }
+    .stat-box {
+      background: var(--surface-alt);
+      padding: 10px;
+      border-radius: 12px;
+    }
+    .stat-box-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+    .stat-box-val {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Progress bars / breakdowns */
+    .breakdown-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .breakdown-item {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .breakdown-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .bar-track {
+      height: 8px;
+      background: var(--surface-alt);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 999px;
+      background: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    /* Workout List */
+    .workout-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+      position: relative;
+    }
+    .workout-item:hover {
+      border-color: var(--primary);
+    }
+    .workout-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .cat-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.76rem;
+      font-weight: 700;
+    }
+    .cat-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    .workout-metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      background: var(--surface-alt);
+      padding: 8px 10px;
+      border-radius: 11px;
+    }
+    .wm-label {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+    .wm-val {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+    .workout-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      gap: 8px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--nav-h);
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      z-index: 40;
+      padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+    .nav-btn {
+      flex: 1;
+      height: 100%;
+      border: none;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 3px;
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .nav-btn.active {
+      color: var(--primary);
+    }
+    .nav-btn svg {
+      width: 22px;
+      height: 22px;
+    }
+    .nav-add-wrap {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+    }
+    .nav-add-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--primary);
+      color: var(--primary-fg);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.38);
+      cursor: pointer;
+      transform: translateY(-6px);
+    }
+
+    /* Detail Grid */
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+    @media (min-width: 600px) {
+      .detail-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    .detail-metric {
+      background: var(--surface-alt);
+      padding: 10px 12px;
+      border-radius: 12px;
+    }
+    .detail-metric-label {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .detail-metric-val {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-top: 2px;
+    }
+
+    /* Splits table */
+    .splits-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.84rem;
+    }
+    .splits-table th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 6px 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .splits-table td {
+      padding: 7px 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .splits-table tr.fastest-km {
+      background: var(--primary-soft);
+      font-weight: 700;
+    }
+    .split-bar-wrap {
+      width: 100%;
+      height: 8px;
+      background: var(--surface-alt);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .split-bar {
+      height: 100%;
+      background: var(--primary);
+      border-radius: 4px;
+    }
+    .fastest-km .split-bar {
+      background: var(--success);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: calc(var(--nav-h) + 14px);
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: #1f2937;
+      color: #ffffff;
+      padding: 11px 16px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+      z-index: 60;
+      transition: transform 0.25s ease;
+      font-size: 0.9rem;
+      font-weight: 500;
+      max-width: 92vw;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    .toast-undo {
+      background: transparent;
+      border: none;
+      color: #60a5fa;
+      font-weight: 700;
+      cursor: pointer;
+      padding: 2px 6px;
+    }
+
+    /* Import dropzone */
+    .import-box {
+      border: 2px dashed var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      background: var(--surface-alt);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+    .import-box:hover {
+      border-color: var(--primary);
+    }
+
+    /* SVG helpers */
+    svg.chart-svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      overflow: visible;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px 16px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .live-pace-box {
+      background: var(--primary-soft);
+      color: var(--primary);
+      padding: 10px 12px;
+      border-radius: 11px;
+      font-weight: 700;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .notice-box {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: var(--surface-alt);
+      padding: 8px 11px;
+      border-radius: 10px;
+      margin-top: 8px;
+    }
+
+    .cat-edit-row {
+      display: grid;
+      grid-template-columns: 34px 1fr 72px 34px;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .color-picker {
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="app-header">
+    <div class="app-title">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)">
+        <path d="M13 4v6l4 2"/>
+        <circle cx="12" cy="12" r="9"/>
+      </svg>
+      Bežecký Denník
+      <span class="badge-hm">Polmaratón</span>
+    </div>
+    <button id="headerQuickImportBtn" class="btn btn-secondary btn-sm">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      Import
+    </button>
+  </header>
+
+  <main class="container">
+
+    <!-- ==================== 1. PREHĽAD ==================== -->
+    <section id="view-overview" class="view active">
+      <div class="card">
+        <div class="segmented" id="overviewPeriodTabs">
+          <button data-period="week" class="active">Týždeň</button>
+          <button data-period="month">Mesiac</button>
+          <button data-period="year">Rok</button>
+        </div>
+        <div class="period-nav">
+          <button id="prevPeriodBtn" class="btn btn-secondary btn-icon" aria-label="Predchádzajúce obdobie">◀</button>
+          <div id="periodLabel" class="period-label">Tento týždeň</div>
+          <button id="nextPeriodBtn" class="btn btn-secondary btn-icon" aria-label="Nasledujúce obdobie">▶</button>
+        </div>
+
+        <div class="hero-km" id="ovTotalKm">0,00 <span>km</span></div>
+
+        <div class="stats-row">
+          <div class="stat-box">
+            <div class="stat-box-label">Celkový čas</div>
+            <div class="stat-box-val" id="ovTotalTime">0:00</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-label">Priem. tempo</div>
+            <div class="stat-box-val" id="ovAvgPace">--:--</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-box-label">Tréningy</div>
+            <div class="stat-box-val" id="ovCount">0</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Stĺpcový graf kilometrov v období -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Kilometre v období</div>
+          <div class="card-subtitle" id="ovBarChartSub">Po dňoch</div>
+        </div>
+        <div id="ovBarChart"></div>
+      </div>
+
+      <!-- Rozdelenie podľa kategórií a obuvi -->
+      <div class="form-grid form-grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Podľa kategórií</div>
+          </div>
+          <div id="ovCatBreakdown" class="breakdown-list"></div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Podľa obuvi</div>
+          </div>
+          <div id="ovShoeBreakdown" class="breakdown-list"></div>
+        </div>
+      </div>
+
+      <!-- Trend za posledných 12 týždňov -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Trend (12 týždňov)</div>
+            <div class="card-subtitle" id="trendSubtitle">Týždenný objem v km</div>
+          </div>
+          <div class="segmented" style="width: 170px;" id="trendModeTabs">
+            <button data-mode="km" class="active">Kilometre</button>
+            <button data-mode="load">Záťaž</button>
+          </div>
+        </div>
+        <div id="trendChart"></div>
+      </div>
+
+      <!-- Karta VO2max -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">VO2max vývoj</div>
+            <div class="card-subtitle">Posledných 20 meraní</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-size: 1.35rem; font-weight: 800;" id="vo2Latest">--</div>
+            <div style="font-size: 0.78rem; font-weight: 600;" id="vo2Delta">Bez zmeny</div>
+          </div>
+        </div>
+        <div id="vo2Chart"></div>
+      </div>
+    </section>
+
+    <!-- ==================== 2. TRÉNINGY (ZOZNAM) ==================== -->
+    <section id="view-workouts" class="view">
+      <div class="card">
+        <div class="form-grid form-grid-2">
+          <div class="field">
+            <label for="filterCategory">Filter kategórie</label>
+            <select id="filterCategory" class="input"></select>
+          </div>
+          <div class="field">
+            <label for="filterShoe">Filter obuvi</label>
+            <select id="filterShoe" class="input"></select>
+          </div>
+        </div>
+      </div>
+      <div id="workoutsList" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </section>
+
+    <!-- ==================== 3. FORMULÁR (PRIDAŤ / UPRAVIŤ + IMPORT) ==================== -->
+    <section id="view-form" class="view">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Import z hodiniek Amazfit / súborov</div>
+          <div class="card-subtitle">FIT, GPX, TCX, CSV</div>
+        </div>
+        <label class="import-box" for="fileImportInput">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--primary)">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <strong>Vybrať jeden alebo viac súborov</strong>
+          <span style="font-size:0.78rem; color:var(--text-muted);">Podporuje binárny .fit, .gpx, .tcx a .csv</span>
+        </label>
+        <!-- Bez atribútu accept podľa požiadavky -->
+        <input type="file" id="fileImportInput" multiple style="display:none;" />
+        <div id="importStatusMsg" class="notice-box" style="display:none;"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title" id="formHeading">Nový tréning</div>
+          <button type="button" id="cancelEditBtn" class="btn btn-secondary btn-sm" style="display:none;">Zrušiť úpravu</button>
+        </div>
+
+        <form id="workoutForm" class="form-grid">
+          <input type="hidden" id="editWorkoutId" />
+
+          <div class="form-grid form-grid-2">
+            <div class="field">
+              <label for="fDate">Dátum</label>
+              <input type="date" id="fDate" class="input" required />
+            </div>
+            <div class="field">
+              <label for="fDistance">Vzdialenosť (km)</label>
+              <input type="number" id="fDistance" class="input" step="0.01" min="0.01" placeholder="napr. 10.50" required />
+            </div>
+          </div>
+
+          <div class="form-grid form-grid-2">
+            <div class="field">
+              <label for="fDuration">Čas (h:mm:ss alebo mm:ss)</label>
+              <input type="text" id="fDuration" class="input" placeholder="napr. 52:30 alebo 1:42:15" required />
+            </div>
+            <div class="field">
+              <label>Vypočítané tempo</label>
+              <div class="live-pace-box">
+                <span>Tempo:</span>
+                <span id="livePaceDisplay">--:-- /km</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-grid form-grid-3">
+            <div class="field">
+              <label for="fCategory">Kategória</label>
+              <select id="fCategory" class="input"></select>
+            </div>
+            <div class="field">
+              <label for="fShoe">Obuv</label>
+              <select id="fShoe" class="input"></select>
+            </div>
+            <div class="field">
+              <label for="fVo2">VO2max z hodiniek (nepovinné)</label>
+              <input type="number" id="fVo2" class="input" step="0.1" min="15" max="95" placeholder="napr. 51.5" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="fNote">Poznámka</label>
+            <textarea id="fNote" class="input" rows="2" placeholder="Pocit z behu, počasie, terén..."></textarea>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="width:100%; margin-top:4px;" id="saveWorkoutBtn">Uložiť tréning</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ==================== 4. DETAIL TRÉNINGU ==================== -->
+    <section id="view-detail" class="view">
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+        <button id="detailBackBtn" class="btn btn-secondary btn-sm">← Späť</button>
+        <div style="display:flex; gap:8px;">
+          <button id="detailEditBtn" class="btn btn-secondary btn-sm">Upraviť</button>
+          <button id="detailDeleteBtn" class="btn btn-danger btn-sm">Zmazať</button>
+        </div>
+      </div>
+
+      <div id="detailContent" style="display:flex; flex-direction:column; gap:14px;"></div>
+    </section>
+
+    <!-- ==================== 5. VIAC (OBUV, KATEGÓRIE, NASTAVENIA) ==================== -->
+    <section id="view-more" class="view">
+      <!-- Nastavenie tepu -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Pulzové parametre</div>
+            <div class="card-subtitle">Používa sa pre zóny Z1–Z5 a odhad VO2max</div>
+          </div>
+        </div>
+        <div class="form-grid form-grid-2">
+          <div class="field">
+            <label for="setMaxHr">Maximálny tep (bpm)</label>
+            <input type="number" id="setMaxHr" class="input" min="100" max="240" />
+          </div>
+          <div class="field">
+            <label for="setRestHr">Pokojový tep (bpm)</label>
+            <input type="number" id="setRestHr" class="input" min="30" max="120" />
+          </div>
+        </div>
+        <button id="saveHrSettingsBtn" class="btn btn-primary btn-sm" style="margin-top:12px;">Uložiť nastavenie tepu</button>
+      </div>
+
+      <!-- Obuv -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Bežecká obuv</div>
+            <div class="card-subtitle">Orientačná životnosť 800 km</div>
+          </div>
+        </div>
+        <form id="addShoeForm" style="display:flex; gap:8px; margin-bottom:14px;">
+          <input type="text" id="newShoeName" class="input" placeholder="Názov tenisiek (napr. Saucony Endorphin)" required />
+          <button type="submit" class="btn btn-primary btn-sm">Pridať</button>
+        </form>
+        <div id="shoesList" class="breakdown-list"></div>
+      </div>
+
+      <!-- Kategórie tréningov -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-title">Kategórie tréningov</div>
+            <div class="card-subtitle">Názov, farba a koeficient záťaže</div>
+          </div>
+        </div>
+        <div id="categoriesList"></div>
+        <form id="addCategoryForm" style="display:grid; grid-template-columns: 34px 1fr 72px auto; gap:8px; align-items:center; margin-top:12px;">
+          <input type="color" id="newCatColor" class="color-picker" value="#8b5cf6" />
+          <input type="text" id="newCatName" class="input" placeholder="Nová kategória" required />
+          <input type="number" id="newCatCoef" class="input" step="0.1" min="0.1" max="5" value="1.0" title="Koeficient záťaže" required />
+          <button type="submit" class="btn btn-primary btn-sm">Pridať</button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Spodná navigácia -->
+  <nav class="bottom-nav" aria-label="Hlavná navigácia">
+    <button class="nav-btn active" data-tab="overview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+      </svg>
+      <span>Prehľad</span>
+    </button>
+
+    <button class="nav-btn" data-tab="workouts">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+      </svg>
+      <span>Tréningy</span>
+    </button>
+
+    <div class="nav-add-wrap">
+      <button class="nav-add-btn" id="navAddBtn" aria-label="Nový tréning">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </button>
+    </div>
+
+    <button class="nav-btn" data-tab="more">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+      <span>Viac</span>
+    </button>
+  </nav>
+
+  <!-- Toast pre okamžité zmazanie + vrátenie -->
+  <div id="undoToast" class="toast" role="status" aria-live="polite">
+    <span id="toastText">Zmazané</span>
+    <button id="toastUndoBtn" class="toast-undo">Vrátiť</button>
+  </div>
+
+  <script>
+    (function () {
+      "use strict";
+
+      /* ==================== BEZPEČNOSTNÉ A POMOCNÉ FUNKCIE ==================== */
+      function esc(str) {
+        if (str === null || str === undefined) return "";
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+      }
+
+      function uid(prefix = "id") {
+        return prefix + "_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+      }
+
+      function todayISO() {
+        const d = new Date();
+        const off = d.getTimezoneOffset();
+        const local = new Date(d.getTime() - off * 60000);
+        return local.toISOString().slice(0, 10);
+      }
+
+      function formatDateSK(iso) {
+        if (!iso) return "";
+        const [y, m, d] = iso.split("-");
+        return `${Number(d)}. ${Number(m)}. ${y}`;
+      }
+
+      function formatKm(km) {
+        return Number(km || 0).toFixed(2).replace(".", ",");
+      }
+
+      function formatDuration(sec) {
+        sec = Math.max(0, Math.round(sec || 0));
+        const h = Math.floor(sec / 3600);
+        const m = Math.floor((sec % 3600) / 60);
+        const s = sec % 60;
+        if (h > 0) {
+          return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        }
+        return `${m}:${String(s).padStart(2, "0")}`;
+      }
+
+      function parseDuration(str) {
+        if (!str) return null;
+        const clean = str.trim();
+        const parts = clean.split(":").map(Number);
+        if (parts.some(isNaN) || parts.some(n => n < 0)) return null;
+        if (parts.length === 2) {
+          return parts[0] * 60 + parts[1];
+        }
+        if (parts.length === 3) {
+          return parts[0] * 3600 + parts[1] * 60 + parts[2];
+        }
+        return null;
+      }
+
+      function formatPace(secPerKm) {
+        if (!secPerKm || !isFinite(secPerKm) || secPerKm <= 0) return "--:--";
+        const total = Math.round(secPerKm);
+        const m = Math.floor(total / 60);
+        const s = total % 60;
+        if (m > 59) return "--:--";
+        return `${m}:${String(s).padStart(2, "0")}`;
+      }
+
+      function haversineKm(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const toRad = deg => (deg * Math.PI) / 180;
+        const dLat = toRad(lat2 - lat1);
+        const dLon = toRad(lon2 - lon1);
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      }
+
+      function downsample(arr, maxPoints) {
+        if (!Array.isArray(arr) || arr.length <= maxPoints) return arr || [];
+        const res = [];
+        const step = (arr.length - 1) / (maxPoints - 1);
+        for (let i = 0; i < maxPoints; i++) {
+          res.push(arr[Math.round(i * step)]);
+        }
+        return res;
+      }
+
+      /* ==================== STAV A LOCALSTORAGE ==================== */
+      const STORAGE_KEY = "bezecky_dennik_v1";
+
+      const DEFAULT_CATEGORIES = [
+        { id: "cat_easy", name: "Ľahký", color: "#10b981", coef: 1.0 },
+        { id: "cat_rec", name: "Regenerácia", color: "#38bdf8", coef: 0.8 },
+        { id: "cat_long", name: "Long run", color: "#3b82f6", coef: 1.2 },
+        { id: "cat_tempo", name: "Tempo", color: "#f59e0b", coef: 1.4 },
+        { id: "cat_int", name: "Intervaly", color: "#ef4444", coef: 1.6 },
+        { id: "cat_race", name: "Preteky", color: "#a855f7", coef: 1.8 }
+      ];
+
+      function loadState() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            return {
+              workouts: Array.isArray(parsed.workouts) ? parsed.workouts : [],
+              shoes: Array.isArray(parsed.shoes) ? parsed.shoes : [],
+              categories: Array.isArray(parsed.categories) && parsed.categories.length
+                ? parsed.categories
+                : [...DEFAULT_CATEGORIES],
+              settings: {
+                maxHr: Number(parsed.settings?.maxHr) || 190,
+                restHr: Number(parsed.settings?.restHr) || 55
+              }
+            };
+          }
+        } catch (e) {
+          console.error("Chyba načítania localStorage:", e);
+        }
+        return {
+          workouts: [],
+          shoes: [
+            { id: "shoe_default_1", name: "Tréningové tenisky" }
+          ],
+          categories: [...DEFAULT_CATEGORIES],
+          settings: { maxHr: 190, restHr: 55 }
+        };
+      }
+
+      let state = loadState();
+
+      function saveState() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        } catch (e) {
+          console.error("Chyba ukladania do localStorage:", e);
+        }
+      }
+
+      /* ==================== UI STAV A NAVIGÁCIA ==================== */
+      let currentTab = "overview";
+      let previousTab = "workouts";
+      let selectedWorkoutId = null;
+
+      let overviewPeriod = "week"; // week | month | year
+      let periodOffset = 0; // 0 = aktuálne, -1 = predchádzajúce...
+      let trendMode = "km"; // km | load
+
+      let pendingImportDraft = null; // dočasné telemetrické dáta z importu jedného súboru
+
+      // Undo stav
+      let lastDeletedWorkout = null;
+      let lastDeletedIndex = -1;
+      let undoTimer = null;
+
+      function showToast(message, canUndo = false) {
+        const toast = document.getElementById("undoToast");
+        document.getElementById("toastText").textContent = message;
+        const undoBtn = document.getElementById("toastUndoBtn");
+        undoBtn.style.display = canUndo ? "inline-block" : "none";
+
+        toast.classList.add("show");
+        if (undoTimer) clearTimeout(undoTimer);
+        undoTimer = setTimeout(() => {
+          toast.classList.remove("show");
+          lastDeletedWorkout = null;
+        }, 5000);
+      }
+
+      document.getElementById("toastUndoBtn").addEventListener("click", () => {
+        if (lastDeletedWorkout) {
+          if (lastDeletedIndex >= 0 && lastDeletedIndex <= state.workouts.length) {
+            state.workouts.splice(lastDeletedIndex, 0, lastDeletedWorkout);
+          } else {
+            state.workouts.push(lastDeletedWorkout);
+          }
+          saveState();
+          lastDeletedWorkout = null;
+          document.getElementById("undoToast").classList.remove("show");
+          refreshAllViews();
+        }
+      });
+
+      function switchTab(tab, keepForm = false) {
+        if (tab !== "detail") {
+          previousTab = tab;
+        }
+        currentTab = tab;
+
+        document.querySelectorAll(".view").forEach(v => v.classList.remove("active"));
+        const target = document.getElementById(`view-${tab}`);
+        if (target) target.classList.add("active");
+
+        document.querySelectorAll(".nav-btn").forEach(btn => {
+          btn.classList.toggle("active", btn.dataset.tab === tab);
+        });
+
+        if (tab === "form" && !keepForm) {
+          resetForm();
+        }
+        if (tab === "overview") renderOverview();
+        if (tab === "workouts") renderWorkoutsList();
+        if (tab === "more") renderMore();
+        window.scrollTo({ top: 0, behavior: "instant" });
+      }
+
+      document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.addEventListener("click", () => switchTab(btn.dataset.tab));
+      });
+
+      document.getElementById("navAddBtn").addEventListener("click", () => switchTab("form", false));
+      document.getElementById("headerQuickImportBtn").addEventListener("click", () => {
+        switchTab("form", false);
+        document.getElementById("fileImportInput").click();
+      });
+
+      /* ==================== PARSERY SÚBOROV (FIT, GPX, TCX, CSV) ==================== */
+
+      // 1. VLASTNÝ BINÁRNY PARSER PRE GARMIN / AMAZFIT FIT
+      function parseFIT(arrayBuffer) {
+        const view = new DataView(arrayBuffer);
+        const bytes = new Uint8Array(arrayBuffer);
+        if (bytes.length < 14) throw new Error("Súbor FIT je príliš krátky.");
+
+        const headerSize = view.getUint8(0);
+        const dataSize = view.getUint32(4, true);
+        const sig = String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]);
+        if (sig !== ".FIT") throw new Error("Neplatná hlavička súboru FIT.");
+
+        const endOffset = Math.min(bytes.length, headerSize + dataSize);
+        let offset = headerSize;
+
+        // Lokálne definície správ (0..15)
+        const localDefs = {};
+        const records = [];
+        let sessionData = null;
+
+        // FIT Epoch: 1989-12-31 00:00:00 UTC = 631065600 sekúnd od Unix epoch
+        const FIT_EPOCH_OFFSET = 631065600;
+        let lastTimestamp = 0;
+
+        // Veľkosti základných FIT typov
+        const baseTypeSizes = {
+          0x00: 1, // enum
+          0x01: 1, // sint8
+          0x02: 1, // uint8
+          0x83: 2, // sint16
+          0x84: 2, // uint16
+          0x85: 4, // sint32
+          0x86: 4, // uint32
+          0x07: 1, // string
+          0x88: 4, // float32
+          0x89: 8, // float64
+          0x0A: 1, // uint8z
+          0x8B: 2, // uint16z
+          0x8C: 4, // uint32z
+          0x0D: 1, // byte
+          0x8E: 8, // sint64
+          0x8F: 8, // uint64
+          0x90: 8  // uint64z
+        };
+
+        function readFieldValue(off, size, baseType, littleEndian) {
+          try {
+            if (baseType === 0x00 || baseType === 0x02 || baseType === 0x0A) {
+              const v = view.getUint8(off);
+              return v === 0xFF ? null : v;
+            }
+            if (baseType === 0x01) {
+              const v = view.getInt8(off);
+              return v === 0x7F ? null : v;
+            }
+            if (baseType === 0x83) {
+              const v = view.getInt16(off, littleEndian);
+              return v === 0x7FFF ? null : v;
+            }
+            if (baseType === 0x84 || baseType === 0x8B) {
+              const v = view.getUint16(off, littleEndian);
+              return v === 0xFFFF ? null : v;
+            }
+            if (baseType === 0x85) {
+              const v = view.getInt32(off, littleEndian);
+              return v === 0x7FFFFFFF ? null : v;
+            }
+            if (baseType === 0x86 || baseType === 0x8C) {
+              const v = view.getUint32(off, littleEndian);
+              return v === 0xFFFFFFFF ? null : v;
+            }
+            if (baseType === 0x88) {
+              return view.getFloat32(off, littleEndian);
+            }
+            if (baseType === 0x89) {
+              return view.getFloat64(off, littleEndian);
+            }
+          } catch (_) {
+            return null;
+          }
+          return null;
+        }
+
+        while (offset < endOffset) {
+          const headerByte = view.getUint8(offset++);
+          const isCompressedTs = (headerByte & 0x80) !== 0;
+
+          if (isCompressedTs) {
+            const localMsgType = (headerByte >> 5) & 0x03;
+            const timeOffset = headerByte & 0x1F;
+            const def = localDefs[localMsgType];
+            if (!def) break;
+
+            if (lastTimestamp > 0) {
+              let ts = (lastTimestamp & ~0x1F) + timeOffset;
+              if (timeOffset < (lastTimestamp & 0x1F)) ts += 0x20;
+              lastTimestamp = ts;
+            }
+
+            const msgValues = { 253: lastTimestamp };
+            for (const f of def.fields) {
+              if (offset + f.size > endOffset) break;
+              msgValues[f.num] = readFieldValue(offset, f.size, f.baseType, def.littleEndian);
+              offset += f.size;
+            }
+            offset += def.devBytes;
+            handleFitMessage(def.globalMsgNum, msgValues);
+          } else {
+            const isDefinition = (headerByte & 0x40) !== 0;
+            const hasDevData = (headerByte & 0x20) !== 0;
+            const localMsgType = headerByte & 0x0F;
+
+            if (isDefinition) {
+              if (offset + 5 > endOffset) break;
+              offset++; // reserved
+              const arch = view.getUint8(offset++);
+              const littleEndian = arch === 0;
+              const globalMsgNum = view.getUint16(offset, littleEndian);
+              offset += 2;
+              const numFields = view.getUint8(offset++);
+
+              const fields = [];
+              for (let i = 0; i < numFields; i++) {
+                if (offset + 3 > endOffset) break;
+                const fNum = view.getUint8(offset++);
+                const fSize = view.getUint8(offset++);
+                const fBaseType = view.getUint8(offset++);
+                fields.push({ num: fNum, size: fSize, baseType: fBaseType });
+              }
+
+              let devBytes = 0;
+              if (hasDevData && offset < endOffset) {
+                const numDevFields = view.getUint8(offset++);
+                for (let i = 0; i < numDevFields; i++) {
+                  if (offset + 3 > endOffset) break;
+                  offset++; // dev field num
+                  const dSize = view.getUint8(offset++);
+                  offset++; // dev index
+                  devBytes += dSize;
+                }
+              }
+
+              localDefs[localMsgType] = {
+                globalMsgNum,
+                littleEndian,
+                fields,
+                devBytes
+              };
+            } else {
+              const def = localDefs[localMsgType];
+              if (!def) break;
+
+              const msgValues = {};
+              for (const f of def.fields) {
+                if (offset + f.size > endOffset) break;
+                msgValues[f.num] = readFieldValue(offset, f.size, f.baseType, def.littleEndian);
+                offset += f.size;
+              }
+              offset += def.devBytes;
+
+              if (msgValues[253] != null) {
+                lastTimestamp = msgValues[253];
+              }
+              handleFitMessage(def.globalMsgNum, msgValues);
+            }
+          }
+        }
+
+        function handleFitMessage(globalMsgNum, v) {
+          // Global Msg 20 = record
+          if (globalMsgNum === 20) {
+            const ts = v[253] != null ? (v[253] + FIT_EPOCH_OFFSET) * 1000 : null;
+            const lat = v[0] != null ? v[0] * (180 / 2147483648) : null;
+            const lon = v[1] != null ? v[1] * (180 / 2147483648) : null;
+            // Výška: field 78 (enhanced_altitude) alebo field 2 (altitude) -> /5 - 500
+            let alt = null;
+            if (v[78] != null) alt = v[78] / 5 - 500;
+            else if (v[2] != null) alt = v[2] / 5 - 500;
+
+            const hr = v[3] != null ? v[3] : null;
+            // Kadencia: field 4 (v FIT pre beh polovičné kroky/min) + fractional cadence (field 53)
+            let cad = null;
+            if (v[4] != null) {
+              const frac = v[53] != null ? v[53] / 128 : 0;
+              cad = Math.round((v[4] + frac) * 2);
+            }
+            // Vzdialenosť v m -> km (field 5: uint32 v cm)
+            const distKm = v[5] != null ? v[5] / 100000 : null;
+            // Rýchlosť: field 73 (enhanced_speed) alebo field 6 (speed) v mm/s -> m/s
+            let speedMs = null;
+            if (v[73] != null) speedMs = v[73] / 1000;
+            else if (v[6] != null) speedMs = v[6] / 1000;
+
+            records.push({ ts, lat, lon, alt, hr, cad, distKm, speedMs });
+          }
+
+          // Global Msg 18 = session
+          if (globalMsgNum === 18) {
+            const startTs = v[2] != null ? (v[2] + FIT_EPOCH_OFFSET) * 1000 : null;
+            const endTs = v[253] != null ? (v[253] + FIT_EPOCH_OFFSET) * 1000 : null;
+            // total_timer_time (field 8) alebo total_elapsed_time (field 7) v ms -> s
+            const timerSec = v[8] != null ? v[8] / 1000 : (v[7] != null ? v[7] / 1000 : null);
+            // total_distance (field 9) v cm -> km
+            const distKm = v[9] != null ? v[9] / 100000 : null;
+            const calories = v[11] != null ? v[11] : null;
+            const avgHr = v[16] != null ? v[16] : null;
+            const maxHr = v[17] != null ? v[17] : null;
+            const avgCad = v[18] != null ? Math.round(v[18] * 2) : null;
+            const ascent = v[22] != null ? v[22] : null;
+
+            sessionData = {
+              startTs,
+              endTs,
+              timerSec,
+              distKm,
+              calories,
+              avgHr,
+              maxHr,
+              avgCad,
+              ascent
+            };
+          }
+        }
+
+        return buildWorkoutFromTrack(records, sessionData);
+      }
+
+      // 2. PARSER PRE GPX
+      function parseGPX(xmlText) {
+        const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+        const trkpts = Array.from(doc.getElementsByTagName("trkpt"));
+        if (!trkpts.length) throw new Error("GPX neobsahuje žiadne body trasy (trkpt).");
+
+        const records = [];
+        let cumDist = 0;
+        let prevLat = null;
+        let prevLon = null;
+
+        for (const pt of trkpts) {
+          const lat = parseFloat(pt.getAttribute("lat"));
+          const lon = parseFloat(pt.getAttribute("lon"));
+          const eleEl = pt.getElementsByTagName("ele")[0];
+          const timeEl = pt.getElementsByTagName("time")[0];
+
+          const alt = eleEl ? parseFloat(eleEl.textContent) : null;
+          const ts = timeEl ? Date.parse(timeEl.textContent) : null;
+
+          // Rozšírenia pre tep a kadenciu (Garmin / Amazfit TrackPointExtension)
+          let hr = null;
+          let cad = null;
+          const allChildren = pt.getElementsByTagName("*");
+          for (const el of allChildren) {
+            const local = el.localName || el.nodeName.split(":").pop();
+            if (local === "hr") hr = parseInt(el.textContent, 10);
+            if (local === "cad") {
+              const cVal = parseInt(el.textContent, 10);
+              cad = cVal < 120 ? cVal * 2 : cVal;
+            }
+          }
+
+          if (!isNaN(lat) && !isNaN(lon)) {
+            if (prevLat !== null && prevLon !== null) {
+              cumDist += haversineKm(prevLat, prevLon, lat, lon);
+            }
+            prevLat = lat;
+            prevLon = lon;
+          }
+
+          records.push({
+            ts: isNaN(ts) ? null : ts,
+            lat: isNaN(lat) ? null : lat,
+            lon: isNaN(lon) ? null : lon,
+            alt: isNaN(alt) ? null : alt,
+            hr: isNaN(hr) ? null : hr,
+            cad: isNaN(cad) ? null : cad,
+            distKm: cumDist,
+            speedMs: null
+          });
+        }
+
+        return buildWorkoutFromTrack(records, null);
+      }
+
+      // 3. PARSER PRE TCX
+      function parseTCX(xmlText) {
+        const doc = new DOMParser().parseFromString(xmlText, "application/xml");
+        const trackpoints = Array.from(doc.getElementsByTagName("Trackpoint"));
+        if (!trackpoints.length) throw new Error("TCX neobsahuje žiadne Trackpoint záznamy.");
+
+        const records = [];
+        let cumDist = 0;
+        let prevLat = null;
+        let prevLon = null;
+
+        for (const tp of trackpoints) {
+          const timeEl = tp.getElementsByTagName("Time")[0];
+          const ts = timeEl ? Date.parse(timeEl.textContent) : null;
+
+          const latEl = tp.getElementsByTagName("LatitudeDegrees")[0];
+          const lonEl = tp.getElementsByTagName("LongitudeDegrees")[0];
+          const lat = latEl ? parseFloat(latEl.textContent) : null;
+          const lon = lonEl ? parseFloat(lonEl.textContent) : null;
+
+          const altEl = tp.getElementsByTagName("AltitudeMeters")[0];
+          const alt = altEl ? parseFloat(altEl.textContent) : null;
+
+          const distEl = tp.getElementsByTagName("DistanceMeters")[0];
+          let distKm = distEl ? parseFloat(distEl.textContent) / 1000 : null;
+
+          if (distKm === null && lat !== null && lon !== null) {
+            if (prevLat !== null && prevLon !== null) {
+              cumDist += haversineKm(prevLat, prevLon, lat, lon);
+            }
+            distKm = cumDist;
+          }
+          if (lat !== null && lon !== null) {
+            prevLat = lat;
+            prevLon = lon;
+          }
+
+          let hr = null;
+          const hrWrap = tp.getElementsByTagName("HeartRateBpm")[0];
+          if (hrWrap) {
+            const valEl = hrWrap.getElementsByTagName("Value")[0];
+            if (valEl) hr = parseInt(valEl.textContent, 10);
+          }
+
+          let cad = null;
+          const cadEl = tp.getElementsByTagName("Cadence")[0];
+          if (cadEl) {
+            const c = parseInt(cadEl.textContent, 10);
+            cad = c < 120 ? c * 2 : c;
+          } else {
+            const allChildren = tp.getElementsByTagName("*");
+            for (const el of allChildren) {
+              const local = el.localName || el.nodeName.split(":").pop();
+              if (local === "RunCadence") {
+                const c = parseInt(el.textContent, 10);
+                cad = c < 120 ? c * 2 : c;
+              }
+            }
+          }
+
+          records.push({
+            ts: isNaN(ts) ? null : ts,
+            lat: isNaN(lat) ? null : lat,
+            lon: isNaN(lon) ? null : lon,
+            alt: isNaN(alt) ? null : alt,
+            hr: isNaN(hr) ? null : hr,
+            cad: isNaN(cad) ? null : cad,
+            distKm: isNaN(distKm) ? null : distKm,
+            speedMs: null
+          });
+        }
+
+        // Kalórie z Lap ak existujú
+        let calories = 0;
+        const calEls = Array.from(doc.getElementsByTagName("Calories"));
+        for (const c of calEls) {
+          calories += parseInt(c.textContent, 10) || 0;
+        }
+
+        return buildWorkoutFromTrack(records, calories > 0 ? { calories } : null);
+      }
+
+      // 4. PARSER PRE CSV (Zepp / Amazfit exporty alebo univerzálne CSV)
+      function parseCSV(text) {
+        const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+        if (lines.length < 2) throw new Error("CSV súbor neobsahuje dáta.");
+
+        const sep = lines[0].includes(";") ? ";" : ",";
+        const headers = lines[0].split(sep).map(h => h.replace(/^"|"$/g, "").trim().toLowerCase());
+
+        const findCol = (keys) => headers.findIndex(h => keys.some(k => h.includes(k)));
+        const idxDate = findCol(["date", "datum", "dátum", "time", "start"]);
+        const idxDist = findCol(["dist", "vzdial", "km"]);
+        const idxDur = findCol(["dur", "time", "cas", "čas", "elapsed", "moving"]);
+        const idxHr = findCol(["hr", "tep", "heart", "pulse"]);
+        const idxMaxHr = findCol(["max_hr", "maxhr", "max tep"]);
+        const idxAsc = findCol(["asc", "elev", "stup", "stúp", "gain"]);
+        const idxCad = findCol(["cad", "kad"]);
+        const idxCal = findCol(["cal", "kal"]);
+        const idxVo2 = findCol(["vo2"]);
+
+        const importedWorkouts = [];
+
+        for (let i = 1; i < lines.length; i++) {
+          const cols = lines[i].split(sep).map(c => c.replace(/^"|"$/g, "").trim());
+          if (cols.length < 2) continue;
+
+          // Dátum
+          let dateStr = todayISO();
+          if (idxDate >= 0 && cols[idxDate]) {
+            const m = cols[idxDate].match(/(\d{4}-\d{2}-\d{2})/);
+            if (m) dateStr = m[1];
+            else {
+              const parsedTs = Date.parse(cols[idxDate]);
+              if (!isNaN(parsedTs)) dateStr = new Date(parsedTs).toISOString().slice(0, 10);
+            }
+          }
+
+          // Vzdialenosť (ak > 200, pravdepodobne v metroch)
+          let dist = idxDist >= 0 ? parseFloat(cols[idxDist].replace(",", ".")) : 0;
+          if (dist > 200) dist = dist / 1000;
+          if (!dist || dist <= 0) continue;
+
+          // Čas (sekundy alebo hh:mm:ss)
+          let durSec = 0;
+          if (idxDur >= 0 && cols[idxDur]) {
+            if (cols[idxDur].includes(":")) {
+              durSec = parseDuration(cols[idxDur]) || 0;
+            } else {
+              durSec = Math.round(parseFloat(cols[idxDur].replace(",", ".")) || 0);
+            }
+          }
+          if (durSec <= 0) durSec = Math.round(dist * 330);
+
+          importedWorkouts.push({
+            date: dateStr,
+            distanceKm: Number(dist.toFixed(2)),
+            durationSec: durSec,
+            avgHr: idxHr >= 0 ? parseInt(cols[idxHr], 10) || null : null,
+            maxHr: idxMaxHr >= 0 ? parseInt(cols[idxMaxHr], 10) || null : null,
+            ascent: idxAsc >= 0 ? Math.round(parseFloat(cols[idxAsc]) || 0) : null,
+            avgCadence: idxCad >= 0 ? parseInt(cols[idxCad], 10) || null : null,
+            calories: idxCal >= 0 ? parseInt(cols[idxCal], 10) || null : null,
+            vo2max: idxVo2 >= 0 ? parseFloat(cols[idxVo2].replace(",", ".")) || null : null
+          });
+        }
+
+        if (!importedWorkouts.length) throw new Error("V CSV sa nenašli platné bežecké záznamy.");
+        return importedWorkouts;
+      }
+
+      // SPRACOVANIE SUROVÝCH ZÁZNAMOV DO ŠTRUKTÚRY TRÉNINGU
+      function buildWorkoutFromTrack(records, session) {
+        const totalRecords = records.length;
+        const validGps = records.filter(r => r.lat !== null && r.lon !== null && (r.lat !== 0 || r.lon !== 0));
+
+        // Dátum
+        let startTs = session?.startTs || null;
+        if (!startTs) {
+          const firstTsRec = records.find(r => r.ts !== null);
+          startTs = firstTsRec ? firstTsRec.ts : Date.now();
+        }
+        const dObj = new Date(startTs);
+        const dateStr = new Date(dObj.getTime() - dObj.getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+
+        // Vzdialenosť
+        let distKm = session?.distKm || null;
+        if (!distKm) {
+          const lastDistRec = [...records].reverse().find(r => r.distKm !== null && r.distKm > 0);
+          distKm = lastDistRec ? lastDistRec.distKm : 0;
+        }
+        distKm = Number((distKm || 0).toFixed(2));
+
+        // Čas
+        let durationSec = session?.timerSec ? Math.round(session.timerSec) : null;
+        if (!durationSec) {
+          const tsList = records.filter(r => r.ts !== null).map(r => r.ts);
+          if (tsList.length >= 2) {
+            durationSec = Math.round((tsList[tsList.length - 1] - tsList[0]) / 1000);
+          } else {
+            durationSec = Math.round(distKm * 330);
+          }
+        }
+
+        // Doplnenie kumulatívnej vzdialenosti pre každý záznam, ak chýba
+        let runningDist = 0;
+        let prevGps = null;
+        for (let i = 0; i < records.length; i++) {
+          const r = records[i];
+          if (r.distKm === null) {
+            if (r.lat !== null && r.lon !== null && prevGps) {
+              runningDist += haversineKm(prevGps.lat, prevGps.lon, r.lat, r.lon);
+            } else if (records.length > 1 && distKm > 0) {
+              runningDist = (i / (records.length - 1)) * distKm;
+            }
+            r.distKm = runningDist;
+          }
+          if (r.lat !== null && r.lon !== null) {
+            prevGps = { lat: r.lat, lon: r.lon };
+          }
+        }
+
+        // Tep, kadencia, stúpanie
+        const hrs = records.filter(r => r.hr && r.hr > 30 && r.hr < 240).map(r => r.hr);
+        const avgHr = session?.avgHr || (hrs.length ? Math.round(hrs.reduce((a, b) => a + b, 0) / hrs.length) : null);
+        const maxHr = session?.maxHr || (hrs.length ? Math.max(...hrs) : null);
+
+        const cads = records.filter(r => r.cad && r.cad > 60 && r.cad < 250).map(r => r.cad);
+        const avgCadence = session?.avgCad || (cads.length ? Math.round(cads.reduce((a, b) => a + b, 0) / cads.length) : null);
+
+        // Stúpanie (s vyhladením šumu ±1.5m)
+        let calcAscent = 0;
+        let lastAlt = null;
+        for (const r of records) {
+          if (r.alt !== null && isFinite(r.alt)) {
+            if (lastAlt !== null) {
+              const diff = r.alt - lastAlt;
+              if (diff > 1.5) {
+                calcAscent += diff;
+                lastAlt = r.alt;
+              } else if (diff < -1.5) {
+                lastAlt = r.alt;
+              }
+            } else {
+              lastAlt = r.alt;
+            }
+          }
+        }
+        const ascent = session?.ascent != null ? Math.round(session.ascent) : Math.round(calcAscent);
+        const calories = session?.calories || null;
+
+        // Pulzové zóny Z1 - Z5 podľa % max. tepu používateľa
+        const userMaxHr = state.settings.maxHr || 190;
+        const zoneSeconds = [0, 0, 0, 0, 0];
+        if (hrs.length > 1) {
+          for (let i = 0; i < records.length; i++) {
+            const hr = records[i].hr;
+            if (!hr || hr < 30) continue;
+            let dt = 1;
+            if (i < records.length - 1 && records[i].ts && records[i + 1].ts) {
+              const d = (records[i + 1].ts - records[i].ts) / 1000;
+              if (d > 0 && d < 30) dt = d;
+            } else if (records.length > 1) {
+              dt = durationSec / records.length;
+            }
+            const pct = (hr / userMaxHr) * 100;
+            if (pct < 60) zoneSeconds[0] += dt;
+            else if (pct < 70) zoneSeconds[1] += dt;
+            else if (pct < 80) zoneSeconds[2] += dt;
+            else if (pct < 90) zoneSeconds[3] += dt;
+            else zoneSeconds[4] += dt;
+          }
+        }
+
+        // Kilometrovky (splits)
+        const splits = [];
+        if (records.length > 2 && distKm >= 0.5) {
+          let kmTarget = 1;
+          let splitStartIdx = 0;
+
+          for (let i = 1; i < records.length; i++) {
+            const d = records[i].distKm || 0;
+            if (d >= kmTarget || i === records.length - 1) {
+              const segDist = d - (records[splitStartIdx].distKm || 0);
+              if (segDist >= 0.15) {
+                let segSec = 0;
+                if (records[i].ts && records[splitStartIdx].ts) {
+                  segSec = (records[i].ts - records[splitStartIdx].ts) / 1000;
+                } else {
+                  segSec = ((i - splitStartIdx) / (records.length - 1)) * durationSec;
+                }
+                const paceSec = segDist > 0 ? segSec / segDist : 0;
+
+                // Priemerný tep a stúpanie úseku
+                let segHrSum = 0, segHrCnt = 0, segAsc = 0, prevA = null;
+                for (let j = splitStartIdx; j <= i; j++) {
+                  if (records[j].hr) {
+                    segHrSum += records[j].hr;
+                    segHrCnt++;
+                  }
+                  if (records[j].alt !== null) {
+                    if (prevA !== null && records[j].alt - prevA > 1.2) {
+                      segAsc += records[j].alt - prevA;
+                      prevA = records[j].alt;
+                    } else if (prevA === null || records[j].alt < prevA - 1.2) {
+                      prevA = records[j].alt;
+                    }
+                  }
+                }
+
+                splits.push({
+                  kmLabel: d >= kmTarget ? `${kmTarget}. km` : `${d.toFixed(2).replace(".", ",")} km`,
+                  dist: Number(segDist.toFixed(2)),
+                  paceSec: Math.round(paceSec),
+                  avgHr: segHrCnt ? Math.round(segHrSum / segHrCnt) : null,
+                  ascent: Math.round(segAsc)
+                });
+              }
+              splitStartIdx = i;
+              kmTarget++;
+            }
+          }
+        }
+
+        // Zjednodušenie série pre grafy (max 150 bodov)
+        const sampledSeries = downsample(records, 150).map((r, idx, arr) => {
+          // Lokálne tempo z okolia bodu
+          let paceSec = null;
+          if (r.speedMs && r.speedMs > 0.5) {
+            paceSec = 1000 / r.speedMs;
+          } else if (idx > 0) {
+            const prev = arr[idx - 1];
+            const dd = (r.distKm || 0) - (prev.distKm || 0);
+            const dt = (r.ts && prev.ts) ? (r.ts - prev.ts) / 1000 : (durationSec / arr.length);
+            if (dd > 0.005 && dt > 0) paceSec = dt / dd;
+          }
+          if (paceSec && (paceSec < 120 || paceSec > 900)) paceSec = null;
+
+          return {
+            d: Number((r.distKm || 0).toFixed(3)),
+            p: paceSec ? Math.round(paceSec) : null,
+            hr: r.hr || null,
+            alt: r.alt !== null ? Number(r.alt.toFixed(1)) : null,
+            cad: r.cad || null
+          };
+        });
+
+        // Zjednodušenie GPS trasy (max 100 bodov)
+        const sampledRoute = downsample(validGps, 100).map(r => [
+          Number(r.lat.toFixed(5)),
+          Number(r.lon.toFixed(5))
+        ]);
+
+        return {
+          date: dateStr,
+          distanceKm: distKm,
+          durationSec,
+          avgHr,
+          maxHr,
+          ascent,
+          avgCadence,
+          calories,
+          route: sampledRoute,
+          gpsCount: validGps.length,
+          totalRecords,
+          series: sampledSeries,
+          splits,
+          zoneSeconds: zoneSeconds.map(z => Math.round(z))
+        };
+      }
+
+      /* ==================== IMPORT HANDLER + DEDUPLIKÁCIA ==================== */
+      document.getElementById("fileImportInput").addEventListener("change", async (e) => {
+        const files = Array.from(e.target.files || []);
+        if (!files.length) return;
+
+        const statusBox = document.getElementById("importStatusMsg");
+        statusBox.style.display = "block";
+        statusBox.textContent = "Spracovávam súbory...";
+
+        const parsedItems = [];
+        const errors = [];
+
+        for (const file of files) {
+          try {
+            const ext = file.name.split(".").pop().toLowerCase();
+            if (ext === "fit") {
+              const buf = await file.arrayBuffer();
+              parsedItems.push(parseFIT(buf));
+            } else if (ext === "gpx") {
+              const txt = await file.text();
+              parsedItems.push(parseGPX(txt));
+            } else if (ext === "tcx") {
+              const txt = await file.text();
+              parsedItems.push(parseTCX(txt));
+            } else if (ext === "csv") {
+              const txt = await file.text();
+              const csvList = parseCSV(txt);
+              parsedItems.push(...csvList);
+            } else {
+              // Pokus o detekciu podľa obsahu ak nemá štandardnú príponu
+              const buf = await file.arrayBuffer();
+              const bytes = new Uint8Array(buf);
+              if (bytes.length > 12 && String.fromCharCode(bytes[8], bytes[9], bytes[10], bytes[11]) === ".FIT") {
+                parsedItems.push(parseFIT(buf));
+              } else {
+                const txt = new TextDecoder().decode(bytes);
+                if (txt.includes("<gpx")) parsedItems.push(parseGPX(txt));
+                else if (txt.includes("<TrainingCenterDatabase")) parsedItems.push(parseTCX(txt));
+                else parsedItems.push(...parseCSV(txt));
+              }
+            }
+          } catch (err) {
+            errors.push(`${file.name}: ${err.message}`);
+          }
+        }
+
+        e.target.value = "";
+
+        if (!parsedItems.length) {
+          statusBox.textContent = "Nepodarilo sa načítať žiadny tréning. " + errors.join(" | ");
+          return;
+        }
+
+        // Pri importe 1 súboru predvyplniť formulár na kontrolu
+        if (parsedItems.length === 1 && files.length === 1) {
+          const item = parsedItems[0];
+          const existing = findDuplicateWorkout(item.date, item.distanceKm);
+
+          pendingImportDraft = item;
+          document.getElementById("editWorkoutId").value = existing ? existing.id : "";
+          document.getElementById("formHeading").textContent = existing
+            ? "Doplnenie existujúceho tréningu"
+            : "Kontrola importovaného tréningu";
+          document.getElementById("fDate").value = item.date;
+          document.getElementById("fDistance").value = item.distanceKm;
+          document.getElementById("fDuration").value = formatDuration(item.durationSec);
+          if (existing) {
+            document.getElementById("fCategory").value = existing.categoryId;
+            document.getElementById("fShoe").value = existing.shoeId || "";
+            document.getElementById("fNote").value = existing.note || "";
+            document.getElementById("fVo2").value = existing.vo2max || item.vo2max || "";
+          } else {
+            document.getElementById("fVo2").value = item.vo2max || "";
+          }
+          updateLivePace();
+          statusBox.textContent = existing
+            ? "Našiel sa existujúci tréning v rovnaký deň (±150 m). Kategória, obuv a poznámka boli zachované – skontroluj a ulož."
+            : "Údaje zo súboru boli predvyplnené. Vyber kategóriu, obuv a ulož tréning.";
+        } else {
+          // Pri viacerých súboroch uložiť rovno s deduplikáciou
+          let added = 0;
+          let updated = 0;
+          for (const item of parsedItems) {
+            const res = upsertImportedWorkout(item);
+            if (res === "updated") updated++;
+            else added++;
+          }
+          saveState();
+          pendingImportDraft = null;
+          statusBox.textContent = `Hotovo: pridaných ${added}, doplnených ${updated} tréningov.` +
+            (errors.length ? ` Chyby: ${errors.join("; ")}` : "");
+          refreshAllViews();
+        }
+      });
+
+      function findDuplicateWorkout(date, distanceKm) {
+        return state.workouts.find(w =>
+          w.date === date && Math.abs((w.distanceKm || 0) - (distanceKm || 0)) <= 0.15
+        );
+      }
+
+      function upsertImportedWorkout(item) {
+        const existing = findDuplicateWorkout(item.date, item.distanceKm);
+        if (existing) {
+          existing.distanceKm = item.distanceKm || existing.distanceKm;
+          existing.durationSec = item.durationSec || existing.durationSec;
+          if (item.avgHr) existing.avgHr = item.avgHr;
+          if (item.maxHr) existing.maxHr = item.maxHr;
+          if (item.ascent != null) existing.ascent = item.ascent;
+          if (item.avgCadence) existing.avgCadence = item.avgCadence;
+          if (item.calories) existing.calories = item.calories;
+          if (item.vo2max && !existing.vo2max) existing.vo2max = item.vo2max;
+          if (item.route && item.route.length) existing.route = item.route;
+          if (item.gpsCount != null) existing.gpsCount = item.gpsCount;
+          if (item.totalRecords != null) existing.totalRecords = item.totalRecords;
+          if (item.series && item.series.length) existing.series = item.series;
+          if (item.splits && item.splits.length) existing.splits = item.splits;
+          if (item.zoneSeconds && item.zoneSeconds.some(z => z > 0)) existing.zoneSeconds = item.zoneSeconds;
+          return "updated";
+        } else {
+          const defaultCat = state.categories[0]?.id || "cat_easy";
+          const defaultShoe = state.shoes[0]?.id || "";
+          state.workouts.push({
+            id: uid("w"),
+            date: item.date,
+            distanceKm: item.distanceKm,
+            durationSec: item.durationSec,
+            categoryId: defaultCat,
+            shoeId: defaultShoe,
+            vo2max: item.vo2max || null,
+            note: "",
+            avgHr: item.avgHr || null,
+            maxHr: item.maxHr || null,
+            ascent: item.ascent ?? null,
+            avgCadence: item.avgCadence || null,
+            calories: item.calories || null,
+            route: item.route || [],
+            gpsCount: item.gpsCount ?? null,
+            totalRecords: item.totalRecords ?? null,
+            series: item.series || [],
+            splits: item.splits || [],
+            zoneSeconds: item.zoneSeconds || []
+          });
+          return "added";
+        }
+      }
+
+      /* ==================== FORMULÁR TRÉNINGU ==================== */
+      function populateSelects() {
+        const catOpts = state.categories
+          .map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`)
+          .join("");
+        document.getElementById("fCategory").innerHTML = catOpts;
+
+        document.getElementById("filterCategory").innerHTML =
+          `<option value="">Všetky kategórie</option>` + catOpts;
+
+        const shoeOpts = `<option value="">-- Bez obuvi --</option>` +
+          state.shoes.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("");
+        document.getElementById("fShoe").innerHTML = shoeOpts;
+
+        document.getElementById("filterShoe").innerHTML =
+          `<option value="">Všetka obuv</option>` +
+          state.shoes.map(s => `<option value="${esc(s.id)}">${esc(s.name)}</option>`).join("");
+      }
+
+      function updateLivePace() {
+        const dist = parseFloat(document.getElementById("fDistance").value);
+        const durSec = parseDuration(document.getElementById("fDuration").value);
+        const el = document.getElementById("livePaceDisplay");
+        if (dist > 0 && durSec > 0) {
+          el.textContent = `${formatPace(durSec / dist)} /km`;
+        } else {
+          el.textContent = "--:-- /km";
+        }
+      }
+
+      document.getElementById("fDistance").addEventListener("input", updateLivePace);
+      document.getElementById("fDuration").addEventListener("input", updateLivePace);
+
+      function resetForm() {
+        pendingImportDraft = null;
+        document.getElementById("editWorkoutId").value = "";
+        document.getElementById("formHeading").textContent = "Nový tréning";
+        document.getElementById("cancelEditBtn").style.display = "none";
+        document.getElementById("importStatusMsg").style.display = "none";
+        document.getElementById("fDate").value = todayISO();
+        document.getElementById("fDistance").value = "";
+        document.getElementById("fDuration").value = "";
+        document.getElementById("fVo2").value = "";
+        document.getElementById("fNote").value = "";
+        if (state.categories.length) document.getElementById("fCategory").value = state.categories[0].id;
+        if (state.shoes.length) document.getElementById("fShoe").value = state.shoes[0].id;
+        updateLivePace();
+      }
+
+      function openEditWorkout(id) {
+        const w = state.workouts.find(item => item.id === id);
+        if (!w) return;
+        switchTab("form", true);
+        pendingImportDraft = null;
+        document.getElementById("editWorkoutId").value = w.id;
+        document.getElementById("formHeading").textContent = "Upraviť tréning";
+        document.getElementById("cancelEditBtn").style.display = "inline-flex";
+        document.getElementById("fDate").value = w.date;
+        document.getElementById("fDistance").value = w.distanceKm;
+        document.getElementById("fDuration").value = formatDuration(w.durationSec);
+        document.getElementById("fCategory").value = w.categoryId || (state.categories[0]?.id || "");
+        document.getElementById("fShoe").value = w.shoeId || "";
+        document.getElementById("fVo2").value = w.vo2max || "";
+        document.getElementById("fNote").value = w.note || "";
+        updateLivePace();
+      }
+
+      document.getElementById("cancelEditBtn").addEventListener("click", () => {
+        resetForm();
+        switchTab("workouts");
+      });
+
+      document.getElementById("workoutForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const date = document.getElementById("fDate").value;
+        const distanceKm = Number(parseFloat(document.getElementById("fDistance").value).toFixed(2));
+        const durationSec = parseDuration(document.getElementById("fDuration").value);
+        const categoryId = document.getElementById("fCategory").value;
+        const shoeId = document.getElementById("fShoe").value;
+        const vo2Raw = parseFloat(document.getElementById("fVo2").value);
+        const vo2max = !isNaN(vo2Raw) && vo2Raw > 0 ? Number(vo2Raw.toFixed(1)) : null;
+        const note = document.getElementById("fNote").value.trim();
+
+        if (!date || !distanceKm || distanceKm <= 0 || !durationSec || durationSec <= 0) {
+          showToast("Skontroluj dátum, vzdialenosť a čas (mm:ss).", false);
+          return;
+        }
+
+        const editId = document.getElementById("editWorkoutId").value;
+        const draft = pendingImportDraft || {};
+
+        if (editId) {
+          const idx = state.workouts.findIndex(w => w.id === editId);
+          if (idx !== -1) {
+            state.workouts[idx] = {
+              ...state.workouts[idx],
+              ...draft,
+              date,
+              distanceKm,
+              durationSec,
+              categoryId,
+              shoeId,
+              vo2max,
+              note
+            };
+          }
+        } else {
+          state.workouts.push({
+            id: uid("w"),
+            date,
+            distanceKm,
+            durationSec,
+            categoryId,
+            shoeId,
+            vo2max,
+            note,
+            avgHr: draft.avgHr || null,
+            maxHr: draft.maxHr || null,
+            ascent: draft.ascent ?? null,
+            avgCadence: draft.avgCadence || null,
+            calories: draft.calories || null,
+            route: draft.route || [],
+            gpsCount: draft.gpsCount ?? null,
+            totalRecords: draft.totalRecords ?? null,
+            series: draft.series || [],
+            splits: draft.splits || [],
+            zoneSeconds: draft.zoneSeconds || []
+          });
+        }
+
+        saveState();
+        resetForm();
+        switchTab("workouts");
+        showToast("Tréning uložený", false);
+      });
+
+      /* ==================== OKAMŽITÉ MAZANIE S VRÁTENÍM ==================== */
+      function deleteWorkoutImmediate(id) {
+        const idx = state.workouts.findIndex(w => w.id === id);
+        if (idx === -1) return;
+
+        lastDeletedWorkout = state.workouts[idx];
+        lastDeletedIndex = idx;
+        state.workouts.splice(idx, 1);
+        saveState();
+
+        if (currentTab === "detail" && selectedWorkoutId === id) {
+          switchTab(previousTab || "workouts");
+        } else {
+          refreshAllViews();
+        }
+        showToast("Zmazané", true);
+      }
+
+      /* ==================== ZOZNAM TRÉNINGOV ==================== */
+      document.getElementById("filterCategory").addEventListener("change", renderWorkoutsList);
+      document.getElementById("filterShoe").addEventListener("change", renderWorkoutsList);
+
+      function getCategoryById(id) {
+        return state.categories.find(c => c.id === id) || { id, name: "Nezaradené", color: "#6b7280", coef: 1.0 };
+      }
+
+      function getShoeById(id) {
+        return state.shoes.find(s => s.id === id) || null;
+      }
+
+      function renderWorkoutsList() {
+        const listEl = document.getElementById("workoutsList");
+        const catFilter = document.getElementById("filterCategory").value;
+        const shoeFilter = document.getElementById("filterShoe").value;
+
+        const sorted = [...state.workouts]
+          .filter(w => (!catFilter || w.categoryId === catFilter) && (!shoeFilter || w.shoeId === shoeFilter))
+          .sort((a, b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+
+        if (!sorted.length) {
+          listEl.innerHTML = `<div class="card empty-state">Žiadne tréningy pre zvolený filter.<br>Pridaj tréning tlačidlom <strong>+</strong> alebo importuj súbor.</div>`;
+          return;
+        }
+
+        listEl.innerHTML = sorted.map(w => {
+          const cat = getCategoryById(w.categoryId);
+          const shoe = getShoeById(w.shoeId);
+          const pace = formatPace(w.durationSec / w.distanceKm);
+
+          return `
+            <article class="workout-item" data-open-id="${esc(w.id)}">
+              <div class="workout-top">
+                <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                  <strong>${esc(formatDateSK(w.date))}</strong>
+                  <span class="cat-pill" style="background:${esc(cat.color)}22; color:${esc(cat.color)};">
+                    <span class="cat-dot" style="background:${esc(cat.color)};"></span>
+                    ${esc(cat.name)}
+                  </span>
+                </div>
+                <button type="button" class="btn btn-danger btn-icon" data-del-id="${esc(w.id)}" title="Zmazať tréning" aria-label="Zmazať tréning">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="workout-metrics">
+                <div>
+                  <div class="wm-label">Vzdialenosť</div>
+                  <div class="wm-val">${formatKm(w.distanceKm)} km</div>
+                </div>
+                <div>
+                  <div class="wm-label">Čas</div>
+                  <div class="wm-val">${formatDuration(w.durationSec)}</div>
+                </div>
+                <div>
+                  <div class="wm-label">Tempo</div>
+                  <div class="wm-val">${pace} /km</div>
+                </div>
+                <div>
+                  <div class="wm-label">Priem. tep</div>
+                  <div class="wm-val">${w.avgHr ? esc(w.avgHr) + " bpm" : "--"}</div>
+                </div>
+              </div>
+
+              <div class="workout-footer">
+                <span>${shoe ? "👟 " + esc(shoe.name) : "Bez obuvi"}</span>
+                ${w.note ? `<span style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:58%;">📝 ${esc(w.note)}</span>` : ""}
+              </div>
+            </article>
+          `;
+        }).join("");
+
+        listEl.querySelectorAll("[data-open-id]").forEach(card => {
+          card.addEventListener("click", (e) => {
+            if (e.target.closest("[data-del-id]")) return;
+            openWorkoutDetail(card.dataset.openId);
+          });
+        });
+
+        listEl.querySelectorAll("[data-del-id]").forEach(btn => {
+          btn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            deleteWorkoutImmediate(btn.dataset.delId);
+          });
+        });
+      }
+
+      /* ==================== DETAIL TRÉNINGU ==================== */
+      document.getElementById("detailBackBtn").addEventListener("click", () => {
+        switchTab(previousTab || "workouts");
+      });
+      document.getElementById("detailEditBtn").addEventListener("click", () => {
+        if (selectedWorkoutId) openEditWorkout(selectedWorkoutId);
+      });
+      document.getElementById("detailDeleteBtn").addEventListener("click", () => {
+        if (selectedWorkoutId) deleteWorkoutImmediate(selectedWorkoutId);
+      });
+
+      function openWorkoutDetail(id) {
+        selectedWorkoutId = id;
+        const w = state.workouts.find(item => item.id === id);
+        if (!w) return;
+
+        switchTab("detail", true);
+        const cat = getCategoryById(w.categoryId);
+        const shoe = getShoeById(w.shoeId);
+        const pace = formatPace(w.durationSec / w.distanceKm);
+
+        // Orientačný odhad VO2max z tempa a priemerného tepu (metóda Swain / Uth)
+        let estVo2Html = "";
+        if (w.avgHr && w.distanceKm >= 1 && w.durationSec >= 300) {
+          const maxHr = state.settings.maxHr || 190;
+          const restHr = state.settings.restHr || 55;
+          const hrr = Math.max(20, maxHr - restHr);
+          const pctHrr = Math.min(1.0, Math.max(0.4, (w.avgHr - restHr) / hrr));
+          const speedMPerMin = (w.distanceKm * 1000) / (w.durationSec / 60);
+          // ACSM rovnica pre spotrebu kyslíka pri behu: VO2 = 3.5 + 0.2 * rýchlosť(m/min)
+          const vo2AtPace = 3.5 + 0.2 * speedMPerMin;
+          const estimatedVo2 = vo2AtPace / pctHrr;
+          if (estimatedVo2 >= 20 && estimatedVo2 <= 90) {
+            estVo2Html = `
+              <div class="card">
+                <div class="card-header">
+                  <div>
+                    <div class="card-title">Orientačný odhad VO2max</div>
+                    <div class="card-subtitle">Z tempa (${pace}/km) a priemerného tepu (${w.avgHr} bpm)</div>
+                  </div>
+                  <div style="font-size:1.5rem; font-weight:800; color:var(--primary);">${estimatedVo2.toFixed(1)}</div>
+                </div>
+                <div class="notice-box">
+                  ⚠️ Ide len o orientačný výpočet z pomeru rýchlosti a srdcovej rezervy (Max. tep ${maxHr}, pokojový tep ${restHr} bpm). Hodnota môže byť ovplyvnená terénom, teplom a únavou.
+                </div>
+              </div>
+            `;
+          }
+        }
+
+        // SVG Trasa z GPS bodov
+        let routeHtml = "";
+        if (w.route && w.route.length >= 2) {
+          routeHtml = `
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Trasa behu</div>
+                <div class="card-subtitle">🟢 Štart &nbsp; 🔴 Cieľ</div>
+              </div>
+              ${renderRouteSVG(w.route)}
+              ${w.gpsCount != null && w.totalRecords && w.gpsCount < Math.min(20, w.totalRecords * 0.5)
+                ? `<div class="notice-box">GPS body: ${w.gpsCount} z ${w.totalRecords} záznamov</div>`
+                : ""}
+            </div>
+          `;
+        } else if (w.totalRecords > 0) {
+          routeHtml = `
+            <div class="card">
+              <div class="card-title">Trasa behu</div>
+              <div class="notice-box">GPS body: ${w.gpsCount || 0} z ${w.totalRecords} záznamov (trasa bez GPS signálu)</div>
+            </div>
+          `;
+        }
+
+        // Grafy podľa vzdialenosti: tempo, tep, výška, kadencia
+        let chartsHtml = "";
+        if (w.series && w.series.length >= 3) {
+          const pacePts = w.series.filter(s => s.p !== null).map(s => ({ x: s.d, y: s.p }));
+          const hrPts = w.series.filter(s => s.hr !== null).map(s => ({ x: s.d, y: s.hr }));
+          const altPts = w.series.filter(s => s.alt !== null).map(s => ({ x: s.d, y: s.alt }));
+          const cadPts = w.series.filter(s => s.cad !== null).map(s => ({ x: s.d, y: s.cad }));
+
+          const blocks = [];
+          if (pacePts.length >= 3) {
+            blocks.push(renderLineChartCard("Tempo podľa vzdialenosti", "Rýchlejšie hore", pacePts, "#3b82f6", true, v => formatPace(v)));
+          }
+          if (hrPts.length >= 3) {
+            blocks.push(renderLineChartCard("Tepová frekvencia", "bpm", hrPts, "#ef4444", false, v => `${Math.round(v)}`));
+          }
+          if (altPts.length >= 3) {
+            blocks.push(renderLineChartCard("Nadmorská výška", "m n. m.", altPts, "#10b981", false, v => `${Math.round(v)} m`));
+          }
+          if (cadPts.length >= 3) {
+            blocks.push(renderLineChartCard("Kadencia behu", "krokov/min", cadPts, "#f59e0b", false, v => `${Math.round(v)}`));
+          }
+          chartsHtml = blocks.join("");
+        }
+
+        // Tabuľka kilometroviek
+        let splitsHtml = "";
+        if (w.splits && w.splits.length > 0) {
+          const validPaces = w.splits.map(s => s.paceSec).filter(p => p > 0);
+          const minPace = Math.min(...validPaces);
+          const maxPace = Math.max(...validPaces);
+
+          const rows = w.splits.map(s => {
+            const isFastest = s.paceSec === minPace && validPaces.length > 1;
+            // Rýchlejší km má dlhší pruh
+            let pct = 70;
+            if (maxPace > minPace) {
+              pct = Math.round(35 + ((maxPace - s.paceSec) / (maxPace - minPace)) * 65);
+            }
+            return `
+              <tr class="${isFastest ? "fastest-km" : ""}">
+                <td>${esc(s.kmLabel)}</td>
+                <td>${formatPace(s.paceSec)}</td>
+                <td style="width:32%;">
+                  <div class="split-bar-wrap"><div class="split-bar" style="width:${pct}%"></div></div>
+                </td>
+                <td>${s.avgHr ? esc(s.avgHr) : "--"}</td>
+                <td>${s.ascent != null ? "+" + esc(s.ascent) + " m" : "--"}</td>
+              </tr>
+            `;
+          }).join("");
+
+          splitsHtml = `
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Kilometrovky</div>
+                <div class="card-subtitle">Najrýchlejší km zvýraznený</div>
+              </div>
+              <table class="splits-table">
+                <thead>
+                  <tr>
+                    <th>Úsek</th>
+                    <th>Tempo</th>
+                    <th>Priebeh</th>
+                    <th>Tep</th>
+                    <th>Stúpanie</th>
+                  </tr>
+                </thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+          `;
+        }
+
+        // Pulzové zóny Z1 - Z5
+        let zonesHtml = "";
+        if (w.zoneSeconds && w.zoneSeconds.some(z => z > 0)) {
+          const totalZ = w.zoneSeconds.reduce((a, b) => a + b, 0) || 1;
+          const zoneMeta = [
+            { name: "Z1 · Regenerácia (<60 %)", color: "#94a3b8" },
+            { name: "Z2 · Aeróbna vytrvalosť (60–70 %)", color: "#38bdf8" },
+            { name: "Z3 · Tempo / Aeróbny výkon (70–80 %)", color: "#10b981" },
+            { name: "Z4 · Anaeróbny prah (80–90 %)", color: "#f59e0b" },
+            { name: "Z5 · Maximum (90–100 %)", color: "#ef4444" }
+          ];
+
+          const zRows = zoneMeta.map((zm, idx) => {
+            const sec = w.zoneSeconds[idx] || 0;
+            const pct = Math.round((sec / totalZ) * 100);
+            return `
+              <div class="breakdown-item">
+                <div class="breakdown-top">
+                  <span>${zm.name}</span>
+                  <span>${formatDuration(sec)} (${pct} %)</span>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${pct}%; background:${zm.color};"></div>
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          zonesHtml = `
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title">Pulzové zóny (Z1–Z5)</div>
+                <div class="card-subtitle">Max. tep ${state.settings.maxHr} bpm</div>
+              </div>
+              <div class="breakdown-list">${zRows}</div>
+            </div>
+          `;
+        }
+
+        document.getElementById("detailContent").innerHTML = `
+          <div class="card">
+            <div class="card-header">
+              <div>
+                <div style="font-size:1.15rem; font-weight:800;">${esc(formatDateSK(w.date))}</div>
+                <div style="margin-top:4px; display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+                  <span class="cat-pill" style="background:${esc(cat.color)}22; color:${esc(cat.color)};">
+                    <span class="cat-dot" style="background:${esc(cat.color)};"></span>
+                    ${esc(cat.name)}
+                  </span>
+                  <span class="card-subtitle">${shoe ? "👟 " + esc(shoe.name) : "Bez obuvi"}</span>
+                </div>
+              </div>
+              ${w.vo2max ? `<span class="badge-hm">VO2max ${esc(w.vo2max)}</span>` : ""}
+            </div>
+
+            <div class="detail-grid">
+              <div class="detail-metric">
+                <div class="detail-metric-label">Vzdialenosť</div>
+                <div class="detail-metric-val">${formatKm(w.distanceKm)} km</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-metric-label">Čas</div>
+                <div class="detail-metric-val">${formatDuration(w.durationSec)}</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-metric-label">Priem. tempo</div>
+                <div class="detail-metric-val">${pace} /km</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-metric-label">Priem. / Max. tep</div>
+                <div class="detail-metric-val">${w.avgHr ? w.avgHr : "--"} / ${w.maxHr ? w.maxHr : "--"}</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-metric-label">Stúpanie</div>
+                <div class="detail-metric-val">${w.ascent != null ? "+" + w.ascent + " m" : "--"}</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-metric-label">Kadencia</div>
+                <div class="detail-metric-val">${w.avgCadence ? w.avgCadence + " spm" : "--"}</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-metric-label">Kalórie</div>
+                <div class="detail-metric-val">${w.calories ? w.calories + " kcal" : "--"}</div>
+              </div>
+              <div class="detail-metric">
+                <div class="detail-metric-label">Záťaž</div>
+                <div class="detail-metric-val">${Math.round((w.durationSec / 60) * (cat.coef || 1))}</div>
+              </div>
+            </div>
+
+            ${w.note ? `<div class="notice-box" style="margin-top:12px;">📝 ${esc(w.note)}</div>` : ""}
+          </div>
+
+          ${routeHtml}
+          ${chartsHtml}
+          ${splitsHtml}
+          ${zonesHtml}
+          ${estVo2Html}
+        `;
+      }
+
+      /* ==================== SVG GRAFY PRE DETAIL ==================== */
+      function renderRouteSVG(points) {
+        const W = 500, H = 260, PAD = 24;
+        const lats = points.map(p => p[0]);
+        const lons = points.map(p => p[1]);
+        const minLat = Math.min(...lats), maxLat = Math.max(...lats);
+        const minLon = Math.min(...lons), maxLon = Math.max(...lons);
+
+        // Korekcia pomeru strán podľa zemepisnej šírky (Slovensko ~49° s.š.)
+        const midLatRad = (((minLat + maxLat) / 2) * Math.PI) / 180;
+        const cosLat = Math.cos(midLatRad) || 0.65;
+
+        const spanX = Math.max(1e-6, (maxLon - minLon) * cosLat);
+        const spanY = Math.max(1e-6, maxLat - minLat);
+        const scale = Math.min((W - PAD * 2) / spanX, (H - PAD * 2) / spanY);
+
+        const offsetX = (W - spanX * scale) / 2;
+        const offsetY = (H - spanY * scale) / 2;
+
+        const coords = points.map(([lat, lon]) => {
+          const x = offsetX + (lon - minLon) * cosLat * scale;
+          const y = H - (offsetY + (lat - minLat) * scale);
+          return [Number(x.toFixed(1)), Number(y.toFixed(1))];
+        });
+
+        const polyStr = coords.map(c => c.join(",")).join(" ");
+        const start = coords[0];
+        const end = coords[coords.length - 1];
+
+        return `
+          <svg class="chart-svg" viewBox="0 0 ${W} ${H}" style="background:var(--surface-alt); border-radius:12px;">
+            <polyline fill="none" stroke="var(--primary)" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" points="${polyStr}" />
+            <circle cx="${start[0]}" cy="${start[1]}" r="6" fill="#10b981" stroke="#ffffff" stroke-width="2" />
+            <circle cx="${end[0]}" cy="${end[1]}" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="2" />
+          </svg>
+        `;
+      }
+
+      function renderLineChartCard(title, subtitle, pts, color, invertY, formatY) {
+        const W = 520, H = 160, PL = 46, PR = 14, PT = 14, PB = 24;
+        const xs = pts.map(p => p.x);
+        const ys = pts.map(p => p.y);
+        const minX = Math.min(...xs), maxX = Math.max(...xs);
+        let minY = Math.min(...ys), maxY = Math.max(...ys);
+        if (minY === maxY) {
+          minY -= 1;
+          maxY += 1;
+        }
+
+        const spanX = Math.max(0.01, maxX - minX);
+        const spanY = maxY - minY;
+
+        const mapped = pts.map(p => {
+          const x = PL + ((p.x - minX) / spanX) * (W - PL - PR);
+          const normY = (p.y - minY) / spanY;
+          const y = invertY
+            ? PT + normY * (H - PT - PB) // menšie číslo (rýchlejšie tempo) hore
+            : H - PB - normY * (H - PT - PB);
+          return `${x.toFixed(1)},${y.toFixed(1)}`;
+        }).join(" ");
+
+        const topVal = invertY ? formatY(minY) : formatY(maxY);
+        const midVal = formatY((minY + maxY) / 2);
+        const botVal = invertY ? formatY(maxY) : formatY(minY);
+
+        return `
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">${esc(title)}</div>
+              <div class="card-subtitle">${esc(subtitle)}</div>
+            </div>
+            <svg class="chart-svg" viewBox="0 0 ${W} ${H}">
+              <line x1="${PL}" y1="${PT}" x2="${W - PR}" y2="${PT}" stroke="var(--border)" stroke-dasharray="3 3" />
+              <line x1="${PL}" y1="${(PT + H - PB) / 2}" x2="${W - PR}" y2="${(PT + H - PB) / 2}" stroke="var(--border)" stroke-dasharray="3 3" />
+              <line x1="${PL}" y1="${H - PB}" x2="${W - PR}" y2="${H - PB}" stroke="var(--border)" />
+
+              <text x="${PL - 6}" y="${PT + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)">${esc(topVal)}</text>
+              <text x="${PL - 6}" y="${(PT + H - PB) / 2 + 3}" text-anchor="end" font-size="10" fill="var(--text-muted)">${esc(midVal)}</text>
+              <text x="${PL - 6}" y="${H - PB}" text-anchor="end" font-size="10" fill="var(--text-muted)">${esc(botVal)}</text>
+
+              <text x="${PL}" y="${H - 6}" text-anchor="start" font-size="10" fill="var(--text-muted)">0 km</text>
+              <text x="${W - PR}" y="${H - 6}" text-anchor="end" font-size="10" fill="var(--text-muted)">${maxX.toFixed(1)} km</text>
+
+              <polyline fill="none" stroke="${color}" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" points="${mapped}" />
+            </svg>
+          </div>
+        `;
+      }
+
+      /* ==================== PREHĽAD (DASHBOARD) ==================== */
+      document.querySelectorAll("#overviewPeriodTabs button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#overviewPeriodTabs button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          overviewPeriod = btn.dataset.period;
+          periodOffset = 0;
+          renderOverview();
+        });
+      });
+
+      document.getElementById("prevPeriodBtn").addEventListener("click", () => {
+        periodOffset--;
+        renderOverview();
+      });
+
+      document.getElementById("nextPeriodBtn").addEventListener("click", () => {
+        periodOffset++;
+        renderOverview();
+      });
+
+      document.querySelectorAll("#trendModeTabs button").forEach(btn => {
+        btn.addEventListener("click", () => {
+          document.querySelectorAll("#trendModeTabs button").forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+          trendMode = btn.dataset.mode;
+          renderTrend12Weeks();
+        });
+      });
+
+      function getPeriodRange(period, offset) {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        if (period === "week") {
+          // Pondelok ako 1. deň týždňa
+          const day = today.getDay(); // 0=Ne, 1=Po...
+          const diffToMon = day === 0 ? -6 : 1 - day;
+          const start = new Date(today);
+          start.setDate(today.getDate() + diffToMon + offset * 7);
+          const end = new Date(start);
+          end.setDate(start.getDate() + 6);
+
+          const label = offset === 0
+            ? `Tento týždeň (${start.getDate()}.${start.getMonth() + 1}. – ${end.getDate()}.${end.getMonth() + 1}.)`
+            : `${start.getDate()}.${start.getMonth() + 1}. – ${end.getDate()}.${end.getMonth() + 1}.${end.getFullYear()}`;
+          return { start, end, label };
+        }
+
+        if (period === "month") {
+          const start = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+          const end = new Date(today.getFullYear(), today.getMonth() + offset + 1, 0);
+          const monthsSK = [
+            "Január", "Február", "Marec", "Apríl", "Máj", "Jún",
+            "Júl", "August", "September", "Október", "November", "December"
+          ];
+          const label = `${monthsSK[start.getMonth()]} ${start.getFullYear()}`;
+          return { start, end, label };
+        }
+
+        // year
+        const year = today.getFullYear() + offset;
+        const start = new Date(year, 0, 1);
+        const end = new Date(year, 11, 31);
+        return { start, end, label: `Rok ${year}` };
+      }
+
+      function toISODate(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        const day = String(d.getDate()).padStart(2, "0");
+        return `${y}-${m}-${day}`;
+      }
+
+      function renderOverview() {
+        const { start, end, label } = getPeriodRange(overviewPeriod, periodOffset);
+        document.getElementById("periodLabel").textContent = label;
+
+        const startISO = toISODate(start);
+        const endISO = toISODate(end);
+
+        const filtered = state.workouts.filter(w => w.date >= startISO && w.date <= endISO);
+
+        const totalKm = filtered.reduce((sum, w) => sum + (w.distanceKm || 0), 0);
+        const totalSec = filtered.reduce((sum, w) => sum + (w.durationSec || 0), 0);
+        const avgPace = totalKm > 0 ? formatPace(totalSec / totalKm) : "--:--";
+
+        document.getElementById("ovTotalKm").innerHTML = `${formatKm(totalKm)} <span>km</span>`;
+        document.getElementById("ovTotalTime").textContent = formatDuration(totalSec);
+        document.getElementById("ovAvgPace").textContent = `${avgPace} /km`;
+        document.getElementById("ovCount").textContent = String(filtered.length);
+
+        // Stĺpcový graf
+        const bars = [];
+        if (overviewPeriod === "week") {
+          document.getElementById("ovBarChartSub").textContent = "Po dňoch (Po–Ne)";
+          const dayNames = ["Po", "Ut", "St", "Št", "Pi", "So", "Ne"];
+          for (let i = 0; i < 7; i++) {
+            const d = new Date(start);
+            d.setDate(start.getDate() + i);
+            const iso = toISODate(d);
+            const val = filtered.filter(w => w.date === iso).reduce((s, w) => s + w.distanceKm, 0);
+            bars.push({ label: dayNames[i], val });
+          }
+        } else if (overviewPeriod === "month") {
+          document.getElementById("ovBarChartSub").textContent = "Po dňoch v mesiaci";
+          const daysInMonth = end.getDate();
+          for (let day = 1; day <= daysInMonth; day++) {
+            const d = new Date(start.getFullYear(), start.getMonth(), day);
+            const iso = toISODate(d);
+            const val = filtered.filter(w => w.date === iso).reduce((s, w) => s + w.distanceKm, 0);
+            bars.push({ label: day === 1 || day % 5 === 0 ? String(day) : "", val });
+          }
+        } else {
+          document.getElementById("ovBarChartSub").textContent = "Po mesiacoch v roku";
+          const mShort = ["Jan", "Feb", "Mar", "Apr", "Máj", "Jún", "Júl", "Aug", "Sep", "Okt", "Nov", "Dec"];
+          for (let m = 0; m < 12; m++) {
+            const prefix = `${start.getFullYear()}-${String(m + 1).padStart(2, "0")}`;
+            const val = filtered.filter(w => w.date.startsWith(prefix)).reduce((s, w) => s + w.distanceKm, 0);
+            bars.push({ label: mShort[m], val });
+          }
+        }
+        document.getElementById("ovBarChart").innerHTML = renderBarChartSVG(bars, "var(--primary)", v => v > 0 ? v.toFixed(1) : "");
+
+        // Rozdelenie podľa kategórií
+        const catMap = {};
+        for (const w of filtered) {
+          catMap[w.categoryId] = (catMap[w.categoryId] || 0) + w.distanceKm;
+        }
+        const catEntries = Object.entries(catMap).sort((a, b) => b[1] - a[1]);
+        document.getElementById("ovCatBreakdown").innerHTML = catEntries.length
+          ? catEntries.map(([cId, km]) => {
+              const cat = getCategoryById(cId);
+              const pct = totalKm > 0 ? Math.round((km / totalKm) * 100) : 0;
+              return `
+                <div class="breakdown-item">
+                  <div class="breakdown-top">
+                    <span>${esc(cat.name)}</span>
+                    <span>${formatKm(km)} km (${pct} %)</span>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width:${pct}%; background:${esc(cat.color)};"></div>
+                  </div>
+                </div>
+              `;
+            }).join("")
+          : `<div class="card-subtitle">Žiadne dáta v období</div>`;
+
+        // Rozdelenie podľa obuvi
+        const shoeMap = {};
+        for (const w of filtered) {
+          const key = w.shoeId || "__none__";
+          shoeMap[key] = (shoeMap[key] || 0) + w.distanceKm;
+        }
+        const shoeEntries = Object.entries(shoeMap).sort((a, b) => b[1] - a[1]);
+        document.getElementById("ovShoeBreakdown").innerHTML = shoeEntries.length
+          ? shoeEntries.map(([sId, km]) => {
+              const shoe = sId === "__none__" ? null : getShoeById(sId);
+              const labelName = shoe ? shoe.name : "Bez obuvi";
+              const pct = totalKm > 0 ? Math.round((km / totalKm) * 100) : 0;
+              return `
+                <div class="breakdown-item">
+                  <div class="breakdown-top">
+                    <span>${esc(labelName)}</span>
+                    <span>${formatKm(km)} km (${pct} %)</span>
+                  </div>
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width:${pct}%;"></div>
+                  </div>
+                </div>
+              `;
+            }).join("")
+          : `<div class="card-subtitle">Žiadne dáta v období</div>`;
+
+        renderTrend12Weeks();
+        renderVo2Card();
+      }
+
+      function renderBarChartSVG(bars, fillColor, valueFormatter) {
+        const W = 520, H = 165, PL = 12, PR = 12, PT = 22, PB = 24;
+        const maxVal = Math.max(1, ...bars.map(b => b.val));
+        const count = bars.length;
+        const plotW = W - PL - PR;
+        const plotH = H - PT - PB;
+        const slotW = plotW / count;
+        const barW = Math.max(3, Math.min(28, slotW * 0.66));
+
+        const items = bars.map((b, i) => {
+          const h = (b.val / maxVal) * plotH;
+          const x = PL + i * slotW + (slotW - barW) / 2;
+          const y = PT + (plotH - h);
+          const cx = PL + i * slotW + slotW / 2;
+          const valText = valueFormatter ? valueFormatter(b.val) : "";
+
+          return `
+            <rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${barW.toFixed(1)}" height="${Math.max(0, h).toFixed(1)}" rx="4" fill="${fillColor}" opacity="${b.val > 0 ? 0.92 : 0.15}" />
+            ${valText && count <= 14 ? `<text x="${cx.toFixed(1)}" y="${(y - 5).toFixed(1)}" text-anchor="middle" font-size="9.5" font-weight="600" fill="var(--text-muted)">${esc(valText)}</text>` : ""}
+            ${b.label ? `<text x="${cx.toFixed(1)}" y="${H - 6}" text-anchor="middle" font-size="10" fill="var(--text-muted)">${esc(b.label)}</text>` : ""}
+          `;
+        }).join("");
+
+        return `
+          <svg class="chart-svg" viewBox="0 0 ${W} ${H}">
+            <line x1="${PL}" y1="${PT + plotH}" x2="${W - PR}" y2="${PT + plotH}" stroke="var(--border)" />
+            ${items}
+          </svg>
+        `;
+      }
+
+      function renderTrend12Weeks() {
+        const now = new Date();
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const day = today.getDay();
+        const diffToMon = day === 0 ? -6 : 1 - day;
+        const thisMon = new Date(today);
+        thisMon.setDate(today.getDate() + diffToMon);
+
+        const bars = [];
+        for (let i = 11; i >= 0; i--) {
+          const wStart = new Date(thisMon);
+          wStart.setDate(thisMon.getDate() - i * 7);
+          const wEnd = new Date(wStart);
+          wEnd.setDate(wStart.getDate() + 6);
+
+          const sISO = toISODate(wStart);
+          const eISO = toISODate(wEnd);
+          const wList = state.workouts.filter(w => w.date >= sISO && w.date <= eISO);
+
+          let val = 0;
+          if (trendMode === "km") {
+            val = wList.reduce((s, w) => s + (w.distanceKm || 0), 0);
+          } else {
+            val = wList.reduce((s, w) => {
+              const cat = getCategoryById(w.categoryId);
+              return s + ((w.durationSec || 0) / 60) * (cat.coef || 1.0);
+            }, 0);
+          }
+
+          bars.push({
+            label: `${wStart.getDate()}.${wStart.getMonth() + 1}.`,
+            val
+          });
+        }
+
+        document.getElementById("trendSubtitle").textContent =
+          trendMode === "km" ? "Týždenný objem v km" : "Tréningová záťaž (min × koeficient)";
+
+        document.getElementById("trendChart").innerHTML = renderBarChartSVG(
+          bars,
+          trendMode === "km" ? "var(--primary)" : "#f59e0b",
+          v => v > 0 ? (trendMode === "km" ? v.toFixed(0) : Math.round(v)) : ""
+        );
+      }
+
+      function renderVo2Card() {
+        const vo2Records = [...state.workouts]
+          .filter(w => w.vo2max && w.vo2max > 0)
+          .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
+          .slice(-20);
+
+        const latestEl = document.getElementById("vo2Latest");
+        const deltaEl = document.getElementById("vo2Delta");
+        const chartEl = document.getElementById("vo2Chart");
+
+        if (!vo2Records.length) {
+          latestEl.textContent = "--";
+          deltaEl.textContent = "Žiadne zadané VO2max";
+          deltaEl.style.color = "var(--text-muted)";
+          chartEl.innerHTML = `<div class="card-subtitle">Zadaj VO2max z hodiniek pri zápise tréningu pre zobrazenie vývoja.</div>`;
+          return;
+        }
+
+        const last = vo2Records[vo2Records.length - 1].vo2max;
+        latestEl.textContent = last.toFixed(1);
+
+        if (vo2Records.length >= 2) {
+          const prev = vo2Records[vo2Records.length - 2].vo2max;
+          const diff = Number((last - prev).toFixed(1));
+          if (diff > 0) {
+            deltaEl.textContent = `+${diff.toFixed(1)} oproti minule`;
+            deltaEl.style.color = "var(--success)";
+          } else if (diff < 0) {
+            deltaEl.textContent = `${diff.toFixed(1)} oproti minule`;
+            deltaEl.style.color = "var(--danger)";
+          } else {
+            deltaEl.textContent = "0.0 (bez zmeny)";
+            deltaEl.style.color = "var(--text-muted)";
+          }
+        } else {
+          deltaEl.textContent = "Prvé meranie";
+          deltaEl.style.color = "var(--text-muted)";
+        }
+
+        const W = 520, H = 140, PL = 36, PR = 16, PT = 18, PB = 22;
+        const vals = vo2Records.map(r => r.vo2max);
+        let minV = Math.min(...vals), maxV = Math.max(...vals);
+        if (minV === maxV) {
+          minV -= 1;
+          maxV += 1;
+        }
+        const spanV = maxV - minV;
+
+        const coords = vo2Records.map((r, i) => {
+          const x = vo2Records.length === 1
+            ? W / 2
+            : PL + (i / (vo2Records.length - 1)) * (W - PL - PR);
+          const y = H - PB - ((r.vo2max - minV) / spanV) * (H - PT - PB);
+          return { x, y, val: r.vo2max, date: r.date };
+        });
+
+        const poly = coords.map(c => `${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(" ");
+        const dots = coords.map(c =>
+          `<circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="4" fill="var(--success)" stroke="var(--surface)" stroke-width="1.5" />`
+        ).join("");
+
+        chartEl.innerHTML = `
+          <svg class="chart-svg" viewBox="0 0 ${W} ${H}">
+            <line x1="${PL}" y1="${PT}" x2="${W - PR}" y2="${PT}" stroke="var(--border)" stroke-dasharray="3 3" />
+            <line x1="${PL}" y1="${H - PB}" x2="${W - PR}" y2="${H - PB}" stroke="var(--border)" />
+            <text x="${PL - 6}" y="${PT + 4}" text-anchor="end" font-size="10" fill="var(--text-muted)">${maxV.toFixed(1)}</text>
+            <text x="${PL - 6}" y="${H - PB}" text-anchor="end" font-size="10" fill="var(--text-muted)">${minV.toFixed(1)}</text>
+            <text x="${PL}" y="${H - 5}" text-anchor="start" font-size="9.5" fill="var(--text-muted)">${esc(formatDateSK(vo2Records[0].date))}</text>
+            <text x="${W - PR}" y="${H - 5}" text-anchor="end" font-size="9.5" fill="var(--text-muted)">${esc(formatDateSK(vo2Records[vo2Records.length - 1].date))}</text>
+            ${coords.length > 1 ? `<polyline fill="none" stroke="var(--success)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" points="${poly}" />` : ""}
+            ${dots}
+          </svg>
+        `;
+      }
+
+      /* ==================== VIAC: OBUV, KATEGÓRIE, NASTAVENIA ==================== */
+      document.getElementById("saveHrSettingsBtn").addEventListener("click", () => {
+        const maxHr = parseInt(document.getElementById("setMaxHr").value, 10);
+        const restHr = parseInt(document.getElementById("setRestHr").value, 10);
+        if (maxHr >= 100 && maxHr <= 240 && restHr >= 30 && restHr < maxHr) {
+          state.settings.maxHr = maxHr;
+          state.settings.restHr = restHr;
+          saveState();
+          showToast("Nastavenie tepu uložené", false);
+        } else {
+          showToast("Zadaj platné hodnoty max. a pokojového tepu.", false);
+        }
+      });
+
+      document.getElementById("addShoeForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const input = document.getElementById("newShoeName");
+        const name = input.value.trim();
+        if (!name) return;
+        state.shoes.push({ id: uid("shoe"), name });
+        input.value = "";
+        saveState();
+        populateSelects();
+        renderMore();
+        showToast("Obuv pridaná", false);
+      });
+
+      document.getElementById("addCategoryForm").addEventListener("submit", (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById("newCatName");
+        const colorInput = document.getElementById("newCatColor");
+        const coefInput = document.getElementById("newCatCoef");
+
+        const name = nameInput.value.trim();
+        const color = colorInput.value || "#3b82f6";
+        const coef = parseFloat(coefInput.value) || 1.0;
+        if (!name) return;
+
+        state.categories.push({
+          id: uid("cat"),
+          name,
+          color,
+          coef: Number(coef.toFixed(2))
+        });
+        nameInput.value = "";
+        coefInput.value = "1.0";
+        saveState();
+        populateSelects();
+        renderMore();
+        showToast("Kategória pridaná", false);
+      });
+
+      function renderMore() {
+        document.getElementById("setMaxHr").value = state.settings.maxHr;
+        document.getElementById("setRestHr").value = state.settings.restHr;
+
+        // Obuv + najazdené km vs 800 km
+        const shoesEl = document.getElementById("shoesList");
+        if (!state.shoes.length) {
+          shoesEl.innerHTML = `<div class="card-subtitle">Zatiaľ nemáš pridanú žiadnu obuv.</div>`;
+        } else {
+          shoesEl.innerHTML = state.shoes.map(shoe => {
+            const totalKm = state.workouts
+              .filter(w => w.shoeId === shoe.id)
+              .reduce((sum, w) => sum + (w.distanceKm || 0), 0);
+            const pct = Math.min(100, Math.round((totalKm / 800) * 100));
+            const barColor = totalKm >= 800 ? "var(--danger)" : (totalKm >= 650 ? "var(--warning)" : "var(--primary)");
+
+            return `
+              <div class="breakdown-item" style="padding:8px 0; border-bottom:1px solid var(--border);">
+                <div class="breakdown-top" style="align-items:center;">
+                  <span>👟 ${esc(shoe.name)}</span>
+                  <div style="display:flex; align-items:center; gap:10px;">
+                    <span>${formatKm(totalKm)} / 800 km</span>
+                    <button type="button" class="btn btn-danger btn-icon" data-del-shoe="${esc(shoe.id)}" title="Zmazať obuv">✕</button>
+                  </div>
+                </div>
+                <div class="bar-track">
+                  <div class="bar-fill" style="width:${pct}%; background:${barColor};"></div>
+                </div>
+              </div>
+            `;
+          }).join("");
+
+          shoesEl.querySelectorAll("[data-del-shoe]").forEach(btn => {
+            btn.addEventListener("click", () => {
+              const id = btn.dataset.delShoe;
+              state.shoes = state.shoes.filter(s => s.id !== id);
+              saveState();
+              populateSelects();
+              renderMore();
+              showToast("Obuv odstránená", false);
+            });
+          });
+        }
+
+        // Kategórie tréningov (editovateľné priamo)
+        const catsEl = document.getElementById("categoriesList");
+        catsEl.innerHTML = state.categories.map(cat => `
+          <div class="cat-edit-row" data-cat-row="${esc(cat.id)}">
+            <input type="color" class="color-picker" value="${esc(cat.color)}" data-cat-color="${esc(cat.id)}" title="Farba kategórie" />
+            <input type="text" class="input" value="${esc(cat.name)}" data-cat-name="${esc(cat.id)}" />
+            <input type="number" class="input" step="0.1" min="0.1" max="5" value="${esc(cat.coef)}" data-cat-coef="${esc(cat.id)}" title="Koeficient záťaže" />
+            <button type="button" class="btn btn-danger btn-icon" data-del-cat="${esc(cat.id)}" title="Zmazať kategóriu" ${state.categories.length <= 1 ? "disabled" : ""}>✕</button>
+          </div>
+        `).join("");
+
+        catsEl.querySelectorAll("[data-cat-color]").forEach(inp => {
+          inp.addEventListener("change", () => {
+            const cat = state.categories.find(c => c.id === inp.dataset.catColor);
+            if (cat) {
+              cat.color = inp.value;
+              saveState();
+            }
+          });
+        });
+
+        catsEl.querySelectorAll("[data-cat-name]").forEach(inp => {
+          inp.addEventListener("change", () => {
+            const cat = state.categories.find(c => c.id === inp.dataset.catName);
+            const val = inp.value.trim();
+            if (cat && val) {
+              cat.name = val;
+              saveState();
+              populateSelects();
+            }
+          });
+        });
+
+        catsEl.querySelectorAll("[data-cat-coef]").forEach(inp => {
+          inp.addEventListener("change", () => {
+            const cat = state.categories.find(c => c.id === inp.dataset.catCoef);
+            const val = parseFloat(inp.value);
+            if (cat && val > 0) {
+              cat.coef = Number(val.toFixed(2));
+              saveState();
+            }
+          });
+        });
+
+        catsEl.querySelectorAll("[data-del-cat]").forEach(btn => {
+          btn.addEventListener("click", () => {
+            if (state.categories.length <= 1) return;
+            const id = btn.dataset.delCat;
+            state.categories = state.categories.filter(c => c.id !== id);
+            saveState();
+            populateSelects();
+            renderMore();
+            showToast("Kategória zmazaná", false);
+          });
+        });
+      }
+
+      /* ==================== INICIALIZÁCIA ==================== */
+      function refreshAllViews() {
+        populateSelects();
+        if (currentTab === "overview") renderOverview();
+        if (currentTab === "workouts") renderWorkoutsList();
+        if (currentTab === "more") renderMore();
+      }
+
+      populateSelects();
+      resetForm();
+      renderOverview();
+    })();
+  </script>
+</body>
+  </html>
